@@ -1,0 +1,3 @@
+"BOARD_ROOT":"C:/Users/robin/Documents/NRF_Connect_SDK/v1.6.0-rc2/nrf"
+"DTS_ROOT":"C:/Users/robin/Documents/NRF_Connect_SDK/v1.6.0-rc2/nrf"
+"MODULE_EXT_ROOT":"C:/Users/robin/Documents/NRF_Connect_SDK/v1.6.0-rc2/nrf"
