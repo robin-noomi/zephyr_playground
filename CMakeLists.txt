@@ -1,43 +1,89 @@
-# SPDX-License-Identifier: Apache-2.0
-
 cmake_minimum_required(VERSION 3.13.1)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(blinky)
 
-# include(utils/cmake/utils.cmake)
+project(example-standalone-inferencing-zephyr)
 
+include(utils/cmake/utils.cmake)
 # Needed for colorful output
 zephyr_compile_options(-fdiagnostics-color=always)
 
-# NORDIC SDK APP START
+# Use hardware acceleration for DSP and Neural Network code
+# You'll need to disable these on non-Arm cores
+add_definitions(-DEIDSP_USE_CMSIS_DSP=1
+                -DEIDSP_LOAD_CMSIS_DSP_SOURCES=1
+                -DEI_CLASSIFIER_TFLITE_ENABLE_CMSIS_NN=1
+                -DEIDSP_QUANTIZE_FILTERBANK=0
+                -DARM_MATH_LOOPUNROLL
+                -DEI_SENSOR_AQ_STREAM=FILE
+                )
 
-# set(INCLUDES
-    # edge-impulse-custom/ingestion-sdk-c
-    # edge-impulse-custom/ingestion-sdk-platform/NordicSemi-nrf52
-    # edge-impulse-custom/ingestion-sdk-platform/NordicSemi-nrf52/sensors
-    # edge-impulse-custom/mbedtls_hmac_sha256_sw
-    # edge-impulse-custom/QCBOR/inc
-    # edge-impulse-custom/QCBOR/src
-    # edge-impulse-custom/repl
-    # )
-# include_directories(${INCLUDES})
+# Edge impulse SDK include directories
+set(INCLUDES
+    .
+    src
+    tflite-model
+    model-parameters
+    edge-impulse-sdk
+    edge-impulse-sdk/third_party/ruy
+    edge-impulse-sdk/third_party/gemmlowp
+    edge-impulse-sdk/third_party/flatbuffers/include
+    edge-impulse-sdk/third_party
+    edge-impulse-sdk/tensorflow
+    edge-impulse-sdk/dsp
+    edge-impulse-sdk/classifier
+    edge-impulse-sdk/anomaly
+    edge-impulse-sdk/CMSIS/NN/Include
+    edge-impulse-sdk/CMSIS/DSP/PrivateInclude
+    edge-impulse-sdk/CMSIS/DSP/Include
+    edge-impulse-sdk/CMSIS/Core/Include
+    edge-impulse/ingestion-sdk-c
+    edge-impulse/ingestion-sdk-platform/NordicSemi-nrf52
+    edge-impulse/ingestion-sdk-platform/NordicSemi-nrf52/sensors
+    edge-impulse/mbedtls_hmac_sha256_sw
+    edge-impulse/QCBOR/inc
+    edge-impulse/QCBOR/src
+    edge-impulse/repl
+    edge-impulse-sdk/porting
+    )
+include_directories(${INCLUDES})
 
-# RECURSIVE_FIND_FILE(SOURCE_FILES "edge-impulse-custom/ingestion-sdk-platform/NordicSemi-nrf52" "*.cpp")
-# RECURSIVE_FIND_FILE(REPL_FILES "edge-impulse-custom/repl" "*.cpp")
-# RECURSIVE_FIND_FILE(INGESTION_FILES "edge-impulse-custom/ingestion-sdk-c/" "*.cpp")
-# RECURSIVE_FIND_FILE(QCBOR_FILES "edge-impulse-custom/QCBOR/src" "*.c")
-# RECURSIVE_FIND_FILE(MBEDTLS_FILES "edge-impulse-custom/mbedtls_hmac_sha256_sw/mbedtls/src" "*.c")
+#file(GLOB PLATFORM "${CMAKE_CURRENT_LIST_DIR}/ingestion-sdk-platform/eta-compute/*.cpp")
+#file(GLOB REPL "${CMAKE_CURRENT_LIST_DIR}/repl/*.cpp")
+#file(GLOB INGESTION "${CMAKE_CURRENT_LIST_DIR}/ingestion-sdk-c/*.cpp")
+#file(GLOB QCBOR "${CMAKE_CURRENT_LIST_DIR}/QCBOR/src/*.c")
+#file(GLOB MBEDTLS "${CMAKE_CURRENT_LIST_DIR}/mbedtls_hmac_sha256_sw/mbedtls/src/*.c")
+#file(GLOB EIPORT "${CMAKE_CURRENT_LIST_DIR}/edge-impulse-sdk/porting/YOURTARGET/*.cpp")
 
-# list(APPEND SOURCE_FILES ${REPL_FILES})
-# list(APPEND SOURCE_FILES ${INGESTION_FILES})
-# list(APPEND SOURCE_FILES ${QCBOR_FILES})
-# list(APPEND SOURCE_FILES ${MBEDTLS_FILES})
+RECURSIVE_FIND_FILE(SOURCE_FILES "edge-impulse-sdk" "*.cpp")
+RECURSIVE_FIND_FILE(MODEL_FILES "tflite-model" "*.cpp")
+RECURSIVE_FIND_FILE(CC_FILES "edge-impulse-sdk" "*.cc")
+RECURSIVE_FIND_FILE(S_FILES "edge-impulse-sdk" "*.s")
+RECURSIVE_FIND_FILE(C_FILES "edge-impulse-sdk" "*.c")
 
-# # add all sources to the project
-# target_sources(app PRIVATE ${SOURCE_FILES})
+RECURSIVE_FIND_FILE(PLATFORM_FILES "edge-impulse/ingestion-sdk-platform/NordicSemi-nrf52" "*.cpp")
+RECURSIVE_FIND_FILE(REPL_FILES "edge-impulse/repl" "*.cpp")
+RECURSIVE_FIND_FILE(INGESTION_FILES "edge-impulse/ingestion-sdk-c/" "*.cpp")
+RECURSIVE_FIND_FILE(QCBOR_FILES "edge-impulse/QCBOR/src" "*.c")
+RECURSIVE_FIND_FILE(MBEDTLS_FILES "edge-impulse/mbedtls_hmac_sha256_sw/mbedtls/src" "*.c")
+RECURSIVE_FIND_FILE(PORTING_FILES "edge-impulse-sdk/porting/zephyr" "*.cpp")
 
-target_include_directories(app PRIVATE src/include)
-target_sources(app PRIVATE src/ei_microphone.cpp)
-target_sources(app PRIVATE src/main.c)
 
-# NORDIC SDK APP END
+list(APPEND SOURCE_FILES ${S_FILES})
+list(APPEND SOURCE_FILES ${C_FILES})
+list(APPEND SOURCE_FILES ${CC_FILES})
+list(APPEND SOURCE_FILES ${MODEL_FILES})
+
+list(APPEND SOURCE_FILES ${PLATFORM_FILES})
+list(APPEND SOURCE_FILES ${REPL_FILES})
+list(APPEND SOURCE_FILES ${INGESTION_FILES})
+list(APPEND SOURCE_FILES ${QCBOR_FILES})
+list(APPEND SOURCE_FILES ${MBEDTLS_FILES})
+list(APPEND SOURCE_FILES ${PORTING_FILES})
+
+# add all sources to the project
+target_sources(app PRIVATE ${SOURCE_FILES})
+target_sources(app PRIVATE src/main.cpp)

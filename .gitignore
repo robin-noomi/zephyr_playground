@@ -1,1 +1,10 @@
+build/*
+.vscode/*
+tags
+.west/
+bootloader/
+modules/
+tools/
+#comment if you want to commit your model
+*.hex
 build_nrf52840dk_nrf52840/
