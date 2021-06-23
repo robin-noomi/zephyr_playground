@@ -155,7 +155,7 @@ static void run_nn(void)
             // Wait for prediction to finish
             return;
         }
-        printk("Starting inferencing in 2 seconds...\n");
+        printk("Starting inferencing now...\n");
 
         int err;
         bool cancelled = false;
