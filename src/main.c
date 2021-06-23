@@ -155,7 +155,7 @@ static void run_nn(void)
             // Wait for prediction to finish
             return;
         }
-        printk("Starting inferencing now...\n");
+        printk("Starting inferencing in 2 s...\n");
 
         int err;
         bool cancelled = false;
@@ -170,7 +170,7 @@ static void run_nn(void)
         }
 
         // instead of wait_ms, we'll wait on the signal, this allows threads to cancel us...
-        //k_msleep(2000);
+        k_msleep(2000);
 
         //if(ei_user_invoke_stop()) {
         //    printk("Inferencing stopped by user\r\n");
