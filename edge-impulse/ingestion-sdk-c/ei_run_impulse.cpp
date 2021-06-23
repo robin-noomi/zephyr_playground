@@ -282,21 +282,35 @@ void run_nn_continuous(bool debug)
 		}
             }
 
-            if (0.6 <= result.classification[max_idx].value)
+
+            if ((0.4 <= result.classification[max_idx].value) && (0 == strcmp("nectarine", result.classification[max_idx].label)))
             {
-                if (0 == strcmp("help", result.classification[max_idx].label))
-                {
-                    BOARD_ledSetLedOn(1, 0, 0, 0);
-                    /* start one-shot timer to turn off led */
-                    k_timer_start(&led_off_timer, K_MSEC(500), K_NO_WAIT);
-                }
-                else if (0 == strcmp("nectarine", result.classification[max_idx].label))
-                {
-                    BOARD_ledSetLedOn(0, 0, 0, 1);
-                    /* start one-shot timer to turn off led */
-                    k_timer_start(&led_off_timer, K_MSEC(500), K_NO_WAIT);
-                }
+                BOARD_ledSetLedOn(0, 0, 0, 1);
+                /* start one-shot timer to turn off led */
+                k_timer_start(&led_off_timer, K_MSEC(1000), K_NO_WAIT);
             }
+            else if ((0.6 <= result.classification[max_idx].value) && (0 == strcmp("help", result.classification[max_idx].label)))
+            {
+                BOARD_ledSetLedOn(1, 0, 0, 0);
+                /* start one-shot timer to turn off led */
+                k_timer_start(&led_off_timer, K_MSEC(1000), K_NO_WAIT);
+            }
+
+            //if (0.6 <= result.classification[max_idx].value)
+            //{
+            //    if (0 == strcmp("help", result.classification[max_idx].label))
+            //    {
+            //        BOARD_ledSetLedOn(1, 0, 0, 0);
+            //        /* start one-shot timer to turn off led */
+            //        k_timer_start(&led_off_timer, K_MSEC(1000), K_NO_WAIT);
+            //    }
+            //    else if (0 == strcmp("nectarine", result.classification[max_idx].label))
+            //    {
+            //        BOARD_ledSetLedOn(0, 0, 0, 1);
+            //        /* start one-shot timer to turn off led */
+            //        k_timer_start(&led_off_timer, K_MSEC(1000), K_NO_WAIT);
+            //    }
+            //}
 
 #if EI_CLASSIFIER_HAS_ANOMALY == 1
             ei_printf("    anomaly score: ");

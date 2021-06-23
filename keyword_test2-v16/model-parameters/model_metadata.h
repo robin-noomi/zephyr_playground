@@ -41,10 +41,10 @@
 #define EI_CLASSIFIER_DATATYPE_FLOAT32           1
 #define EI_CLASSIFIER_DATATYPE_INT8              9
 
-#define EI_CLASSIFIER_PROJECT_ID                 37050
+#define EI_CLASSIFIER_PROJECT_ID                 23772
 #define EI_CLASSIFIER_PROJECT_OWNER              "Robin"
-#define EI_CLASSIFIER_PROJECT_NAME               "keyword_test2 v4"
-#define EI_CLASSIFIER_PROJECT_DEPLOY_VERSION     9
+#define EI_CLASSIFIER_PROJECT_NAME               "keyword_test2"
+#define EI_CLASSIFIER_PROJECT_DEPLOY_VERSION     16
 #define EI_CLASSIFIER_NN_INPUT_FRAME_SIZE        650
 #define EI_CLASSIFIER_RAW_SAMPLE_COUNT           16000
 #define EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME      1
