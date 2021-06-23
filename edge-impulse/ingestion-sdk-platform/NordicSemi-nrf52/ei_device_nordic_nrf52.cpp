@@ -550,7 +550,7 @@ void ei_led_state_control(void)
  */
 static void zephyr_timer_handler(struct k_timer *dummy)
 {
-    ei_led_state_control();
+    //ei_led_state_control();
 }
 
 /**

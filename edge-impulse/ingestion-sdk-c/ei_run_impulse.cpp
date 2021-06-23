@@ -27,6 +27,22 @@
 #include "ei_microphone.h"
 #include "ei_device_nordic_nrf52.h"
 
+
+static void led_timer_handler(struct k_timer *dummy);
+
+/** Zephyr timer */
+K_TIMER_DEFINE(led_off_timer, led_timer_handler, NULL);
+
+/**
+ * @brief      One shot timer to turn off all leds
+ *
+ * @param      dummy  The dummy
+ */
+static void led_timer_handler(struct k_timer *dummy)
+{
+    BOARD_ledSetLedOn(0, 0, 0, 0);
+}
+
 #if defined(EI_CLASSIFIER_SENSOR) && EI_CLASSIFIER_SENSOR == EI_CLASSIFIER_SENSOR_ACCELEROMETER
 
 /* Private variables ------------------------------------------------------- */
@@ -253,11 +269,35 @@ void run_nn_continuous(bool debug)
             // print the predictions
             ei_printf("Predictions (DSP: %d ms., Classification: %d ms., Anomaly: %d ms.): \n",
                 result.timing.dsp, result.timing.classification, result.timing.anomaly);
+            
+            float max_val = result.classification[0].value;
+            size_t max_idx = 0;
             for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
                 ei_printf("    %s: \t", result.classification[ix].label);
                 ei_printf_float(result.classification[ix].value);
                 ei_printf("\r\n");
+                if (max_val < result.classification[ix].value) {
+                    max_idx = ix;
+                    max_val = result.classification[ix].value;
+		}
             }
+
+            if (0.6 <= result.classification[max_idx].value)
+            {
+                if (0 == strcmp("help", result.classification[max_idx].label))
+                {
+                    BOARD_ledSetLedOn(1, 0, 0, 0);
+                    /* start one-shot timer to turn off led */
+                    k_timer_start(&led_off_timer, K_MSEC(500), K_NO_WAIT);
+                }
+                else if (0 == strcmp("nectarine", result.classification[max_idx].label))
+                {
+                    BOARD_ledSetLedOn(0, 0, 0, 1);
+                    /* start one-shot timer to turn off led */
+                    k_timer_start(&led_off_timer, K_MSEC(500), K_NO_WAIT);
+                }
+            }
+
 #if EI_CLASSIFIER_HAS_ANOMALY == 1
             ei_printf("    anomaly score: ");
             ei_printf_float(result.anomaly);
