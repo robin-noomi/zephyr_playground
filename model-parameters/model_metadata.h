@@ -41,10 +41,10 @@
 #define EI_CLASSIFIER_DATATYPE_FLOAT32           1
 #define EI_CLASSIFIER_DATATYPE_INT8              9
 
-#define EI_CLASSIFIER_PROJECT_ID                 23772
+#define EI_CLASSIFIER_PROJECT_ID                 37118
 #define EI_CLASSIFIER_PROJECT_OWNER              "Robin"
-#define EI_CLASSIFIER_PROJECT_NAME               "keyword_test2"
-#define EI_CLASSIFIER_PROJECT_DEPLOY_VERSION     19
+#define EI_CLASSIFIER_PROJECT_NAME               "Keyword_test3"
+#define EI_CLASSIFIER_PROJECT_DEPLOY_VERSION     5
 #define EI_CLASSIFIER_NN_INPUT_FRAME_SIZE        650
 #define EI_CLASSIFIER_RAW_SAMPLE_COUNT           16000
 #define EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME      1
@@ -61,11 +61,11 @@
 #define EI_CLASSIFIER_OBJECT_DETECTION           0
 
 
-#define EI_CLASSIFIER_TFLITE_ARENA_SIZE          8569
+#define EI_CLASSIFIER_TFLITE_ARENA_SIZE          5824
 #define EI_CLASSIFIER_TFLITE_INPUT_DATATYPE      EI_CLASSIFIER_DATATYPE_INT8
 #define EI_CLASSIFIER_TFLITE_INPUT_QUANTIZED     1
-#define EI_CLASSIFIER_TFLITE_INPUT_SCALE         0.043229151517152786
-#define EI_CLASSIFIER_TFLITE_INPUT_ZEROPOINT     -19
+#define EI_CLASSIFIER_TFLITE_INPUT_SCALE         0.0454622246325016
+#define EI_CLASSIFIER_TFLITE_INPUT_ZEROPOINT     -13
 #define EI_CLASSIFIER_TFLITE_OUTPUT_DATATYPE     EI_CLASSIFIER_DATATYPE_INT8
 #define EI_CLASSIFIER_TFLITE_OUTPUT_QUANTIZED    1
 #define EI_CLASSIFIER_TFLITE_OUTPUT_SCALE        0.00390625
@@ -90,7 +90,7 @@
 #endif
 #endif // EI_CLASSIFIER_INFERENCING_ENGINE == EI_CLASSIFIER_TFLITE && EI_CLASSIFIER_USE_FULL_TFLITE == 1
 
-const char* ei_classifier_inferencing_categories[] = { "_noise", "_unknown", "help", "nectarine" };
+const char* ei_classifier_inferencing_categories[] = { "help", "nectarine", "noise", "unknown" };
 
 typedef struct {
     uint16_t implementation_version;
@@ -136,6 +136,7 @@ typedef struct {
     int low_frequency;
     int high_frequency;
     int win_size;
+    int noise_floor_db;
 } ei_dsp_config_mfe_t;
 
 typedef struct {
@@ -163,6 +164,7 @@ typedef struct {
     float frame_length;
     float frame_stride;
     int fft_length;
+    int noise_floor_db;
     bool show_axes;
 } ei_dsp_config_spectrogram_t;
 
@@ -176,7 +178,6 @@ typedef struct {
     int low_frequency;
     int high_frequency;
     float pre_cof;
-    bool invert_features;
 } ei_dsp_config_audio_syntiant_t;
 
 uint8_t ei_dsp_config_3_axes[] = { 0 };
