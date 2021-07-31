@@ -66,5 +66,4 @@ void ei_init(void)
 void ei_main(void)
 {
     ei_command_line_handle();
-    //BOARD_ledSetLedOn(1, 0, 1, 0);
 }

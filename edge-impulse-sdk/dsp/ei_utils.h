@@ -19,7 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#pragma once
+#ifndef __EI_UTILS__H__
+#define __EI_UTILS__H__
 
 #define ARRAY_LENGTH(array) (sizeof((array))/sizeof((array)[0]))
 
@@ -52,3 +53,5 @@
 
 // Test whether all the flag bits in word are set.
 #define 	TEST_BIT_MASK(y, flag)   ( ((y)&(flag)) == (flag) )
+
+#endif  //!__EI_UTILS__H__
