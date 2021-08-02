@@ -406,7 +406,6 @@ bool ei_user_invoke_stop(void)
     while(data != 0xFF) {
         if(data == 'b') {
             stop_found = true;
-            EiDevice.set_state(eiStateFinished);
             break;
         }
         data = uart_getchar();
@@ -551,7 +550,7 @@ void ei_led_state_control(void)
  */
 static void zephyr_timer_handler(struct k_timer *dummy)
 {
-    ei_led_state_control();
+    //ei_led_state_control();
 }
 
 /**
