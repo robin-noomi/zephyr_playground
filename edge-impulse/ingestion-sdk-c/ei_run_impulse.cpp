@@ -283,7 +283,7 @@ void run_nn_continuous(bool debug)
             }
 
 
-            if ((0.6 <= result.classification[max_idx].value) && (0 == strcmp("nectarine", result.classification[max_idx].label)))
+            if ((0.4 <= result.classification[max_idx].value) && (0 == strcmp("nectarine", result.classification[max_idx].label)))
             {
                 BOARD_ledSetLedOn(0, 0, 0, 1);
                 /* start one-shot timer to turn off led */
