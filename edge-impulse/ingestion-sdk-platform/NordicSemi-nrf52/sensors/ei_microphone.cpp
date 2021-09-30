@@ -447,13 +447,22 @@ bool ei_microphone_inference_start(uint32_t n_samples)
 
 bool ei_microphone_inference_record(void)
 {
+    bool ret = true;
+
+    if (inference.buf_ready == 1) {
+        ei_printf(
+            "Error sample buffer overrun. Decrease the number of slices per model window "
+            "(EI_CLASSIFIER_SLICES_PER_MODEL_WINDOW)\n");
+         ret = false;
+    }
+
     while (inference.buf_ready == 0) {
         get_dsp_data(&audio_buffer_inference_callback);
     };
  
     inference.buf_ready = 0;
 
-    return true;
+    return ret;
 }
 
 /**
