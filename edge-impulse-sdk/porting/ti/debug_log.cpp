@@ -20,31 +20,19 @@
  * SOFTWARE.
  */
 
-#ifndef _EIDSP_RETURN_TYPES_H_
-#define _EIDSP_RETURN_TYPES_H_
+#include "../ei_classifier_porting.h"
+#if EI_PORTING_TI == 1
 
-#include <stdint.h>
+#include "edge-impulse-sdk/tensorflow/lite/micro/debug_log.h"
+#include <stdio.h>
+#include <stdarg.h>
 
-namespace ei {
+// Redirect TFLite DebugLog to ei_printf
+#if defined(__cplusplus) && EI_C_LINKAGE == 1
+extern "C"
+#endif // defined(__cplusplus) && EI_C_LINKAGE == 1
+void DebugLog(const char* s) {
+    ei_printf("%s", s);
+}
 
-typedef enum {
-    EIDSP_OK = 0,
-    EIDSP_OUT_OF_MEM = -1002,
-    EIDSP_SIGNAL_SIZE_MISMATCH = -1003,
-    EIDSP_MATRIX_SIZE_MISMATCH = -1004,
-    EIDSP_DCT_ERROR = -1005,
-    EIDSP_INPUT_MATRIX_EMPTY = -1006,
-    EIDSP_BUFFER_SIZE_MISMATCH = -1007,
-    EIDSP_PARAMETER_INVALID = -1008,
-    EIDSP_UNEXPECTED_NEXT_OFFSET = -1009,
-    EIDSP_OUT_OF_BOUNDS = -1010,
-    EIDSP_UNSUPPORTED_FILTER_CONFIG = -1011,
-    EIDSP_NARROWING = -1012,
-    EIDSP_BLOCK_VERSION_INCORRECT = -1013,
-    EIDSP_NOT_SUPPORTED = -1014,
-    EIDSP_REQUIRES_CMSIS_DSP = -1015
-} EIDSP_RETURN_T;
-
-} // namespace ei
-
-#endif // _EIDSP_RETURN_TYPES_H_
+#endif // EI_PORTING_SONY_SPRESENSE == 1

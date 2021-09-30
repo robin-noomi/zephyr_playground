@@ -61,6 +61,7 @@ static tflite::ErrorReporter* error_reporter = &micro_error_reporter;
 
 #elif EI_CLASSIFIER_INFERENCING_ENGINE == EI_CLASSIFIER_TFLITE_FULL
 
+#include <thread>
 #include "tensorflow/lite/c/common.h"
 #include "tensorflow/lite/interpreter.h"
 #include "tensorflow/lite/kernels/register.h"
@@ -724,6 +725,17 @@ extern "C" EI_IMPULSE_ERROR run_inference(
 
             if (interpreter->AllocateTensors() != kTfLiteOk) {
                 ei_printf("AllocateTensors failed\n");
+                return EI_IMPULSE_TFLITE_ERROR;
+            }
+
+            int hw_thread_count = (int)std::thread::hardware_concurrency();
+            hw_thread_count -= 1; // leave one thread free for the other application
+            if (hw_thread_count < 1) {
+                hw_thread_count = 1;
+            }
+
+            if (interpreter->SetNumThreads(hw_thread_count) != kTfLiteOk) {
+                ei_printf("SetNumThreads failed\n");
                 return EI_IMPULSE_TFLITE_ERROR;
             }
         }

@@ -21,19 +21,17 @@
  */
 
 #include "../ei_classifier_porting.h"
-#if EI_PORTING_SILABS == 1
+#if EI_PORTING_TI == 1
 
-/* Include ----------------------------------------------------------------- */
+#include <ti/drivers/UART.h>
+
 #include <stdarg.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <cstdio>
+#include "unistd.h"
 
-/* Extern Silabs functions -------------------------------------------------- */
-extern "C" {
-    void sl_sleeptimer_delay_millisecond(uint16_t time_ms);
-    uint32_t sl_sleeptimer_get_tick_count(void);
-    uint32_t sl_sleeptimer_tick_to_ms(uint32_t tick);
-}
+extern "C" void Serial_Out(char *string, int length);
+extern "C" uint64_t Timer_getMs(void);
 
 __attribute__((weak)) EI_IMPULSE_ERROR ei_run_impulse_check_canceled() {
     return EI_IMPULSE_OK;
@@ -43,29 +41,33 @@ __attribute__((weak)) EI_IMPULSE_ERROR ei_run_impulse_check_canceled() {
  * Cancelable sleep, can be triggered with signal from other thread
  */
 __attribute__((weak)) EI_IMPULSE_ERROR ei_sleep(int32_t time_ms) {
-    sl_sleeptimer_delay_millisecond(time_ms);
+
+    usleep(time_ms * 1000);
+
     return EI_IMPULSE_OK;
 }
 
-uint64_t ei_read_timer_ms()
-{
-    return (uint32_t)sl_sleeptimer_tick_to_ms(sl_sleeptimer_get_tick_count());
+uint64_t ei_read_timer_ms() {
+
+    return Timer_getMs();
 }
 
-uint64_t ei_read_timer_us()
-{
+uint64_t ei_read_timer_us() {
+
+    /* TI board hangs when trying to call callback function each micro second */
     return 0;
 }
 
-void ei_serial_set_baudrate(int baudrate)
-{
-}
-
 __attribute__((weak)) void ei_printf(const char *format, ...) {
+
+    char buffer[256];
+    int length;
     va_list myargs;
     va_start(myargs, format);
-    vprintf(format, myargs);
+    length = vsnprintf(buffer, 256, format, myargs);
     va_end(myargs);
+
+    Serial_Out(buffer, length);
 }
 
 __attribute__((weak)) void ei_printf_float(float f) {
@@ -91,4 +93,4 @@ __attribute__((weak)) void DebugLog(const char* s) {
     ei_printf("%s", s);
 }
 
-#endif // EI_PORTING_SILABS == 1
+#endif // EI_PORTING_TI == 1
